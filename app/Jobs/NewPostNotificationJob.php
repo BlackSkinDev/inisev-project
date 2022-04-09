@@ -3,13 +3,15 @@
 namespace App\Jobs;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
+use App\Mail\NewPostNotification;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
 
-class NewPostNotification implements ShouldQueue
+class NewPostNotificationJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -35,6 +37,11 @@ class NewPostNotification implements ShouldQueue
      */
     public function handle()
     {
-       
+        $subscribers = $this->website->subscribers()->get();
+
+        foreach ($subscribers as $key => $user) {
+            Mail::to($user)->send(new NewPostNotification($this->website,$this->post));
+        }
+
     }
 }

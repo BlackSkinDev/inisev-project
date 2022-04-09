@@ -1,12 +1,16 @@
 @component('mail::message')
-# Hey Wale
+# Hello
 
-The body of your message.
+A website you are subscribed to <b>{{$website}}</b> just received a new post, find the details below:
+
+<li>Tile: {{$title}}</li>
+<li>Description: {{$description}}</li>
+
 
 @component('mail::button', ['url' => ''])
-Read Here
+     Login here
 @endcomponent
 
 Thanks,<br>
-{{ config('app.name') }}
+  {{ config('app.name') }}
 @endcomponent

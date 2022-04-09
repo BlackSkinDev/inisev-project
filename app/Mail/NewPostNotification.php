@@ -11,14 +11,17 @@ class NewPostNotification extends Mailable
 {
     use Queueable, SerializesModels;
 
+    public $post;
+    public $website;
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($website,$post)
     {
-        //
+        $this->website = $website;
+        $this->post = $post;
     }
 
     /**
@@ -28,6 +31,6 @@ class NewPostNotification extends Mailable
      */
     public function build()
     {
-        return $this->markdown('emails.website.new_post_notification');
+        return $this->markdown('emails.website.new_post_notification',['title'=>$this->post->title,'description'=>$this->post->description,'website'=>$this->website->name]);
     }
 }
