@@ -1,7 +1,7 @@
 @component('mail::message')
 # Hello
 
-A website you are subscribed to <b>{{$website}}</b> just received a new post, find the details below:
+A website you are subscribed to <b>{{$website->name}}</b> just received a new post, find the details below:
 
 <li>Tile: {{$title}}</li>
 <li>Description: {{$description}}</li>
