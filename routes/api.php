@@ -14,6 +14,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::namespace('Api')->group(function () {
+
+    // create post for a website
+    Route::post('{website}/post', [\App\Http\Controllers\Api\PostController::class,'store']);
+
 });
