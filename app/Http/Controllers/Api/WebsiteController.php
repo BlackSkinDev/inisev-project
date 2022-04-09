@@ -19,7 +19,11 @@ class WebsiteController extends Controller
     // subscribe to website
     // Invalid users/websites returns 404
     public function subscribe(Website $website, User $user){
-        $website->subscribers()->sync($user);
+        $currentSubscribers =   $website->subscribers()->get()->pluck('id')->toArray();
+        if(in_array($user->id,$currentSubscribers)){
+            return $this->successResponse(null,'You already subscribed to this website',Response::HTTP_OK);
+        }
+        $website->subscribers()->attach($user);
         return $this->successResponse(null,'Subscription to website successful',Response::HTTP_OK);
     }
 }
