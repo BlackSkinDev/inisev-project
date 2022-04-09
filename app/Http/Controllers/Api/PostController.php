@@ -22,8 +22,14 @@ class PostController extends Controller
             'description'=>$request->description,
             'website_id'=>$website->id
         ]);
-        // send emails to users subscribed to website using job
-        NewPostNotificationJob::dispatch($website,$post);
+
+        $subscribersCount =   $website->subscribers()->count();
+        
+        // send emails to users subscribed to website using job if website has any subscriber
+        if($subscribersCount){
+            NewPostNotificationJob::dispatch($website,$post);
+        }
+
         return $this->successResponse($post,null,Response::HTTP_OK);
     }
 
