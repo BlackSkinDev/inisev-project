@@ -19,4 +19,9 @@ Route::namespace('Api')->group(function () {
     // create post for a website
     Route::post('{website}/post', [\App\Http\Controllers\Api\PostController::class,'store']);
 
+    // making user subscribe to a website
+    Route::get('{website}/subscribe/{user}/user', [\App\Http\Controllers\Api\WebsiteController::class,'subscribe']);
+
+
+
 });
