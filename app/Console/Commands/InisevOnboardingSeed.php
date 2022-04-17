@@ -11,7 +11,7 @@ class InisevOnboardingSeed extends Command
      *
      * @var string
      */
-    protected $signature = 'inisev-onboarding:seed';
+    protected $signature = 'inisev-onboarding:seed {x} {y*}';
 
     /**
      * The console command description.
@@ -37,9 +37,25 @@ class InisevOnboardingSeed extends Command
      */
     public function handle()
     {
+        $x = $this->argument('x');
+        $y = $this->argument('y');
+
+        // $bar = $this->output->createProgressBar(50);
+        // $bar->start();
+        // $bar->advance();
+        // $bar->finish();
+
+        //if($this->confirm("Do you want to refresh migrations?")){
+            //$this->call('migrate:reset', []);
+        //}
+        $this->comment("Resetting migrations");
         $this->call('migrate:reset', []);
+        $this->comment("Running migrations");
         $this->call('migrate', []);
+        $this->comment("Seeding database tables");
         $this->call('db:seed');
-        $this->comment('Onboarding seed ran successfully');
+        $this->info('Onboarding seed ran successfully');
+        //$this->error('Something went wrong!');
+
     }
 }
