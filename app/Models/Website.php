@@ -13,8 +13,10 @@ class Website extends Model
      * The users that have subscribed to this website.
      */
 
-    public function subscribers()
+    public function posts()
     {
-        return $this->belongsToMany(User::class);
+        return $this->HasMany(Post::class);
     }
+
+  
 }

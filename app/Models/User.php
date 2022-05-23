@@ -41,4 +41,10 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function hasSubscribedToWebsite($website_id){
+        $hasSubscribed = Subscription::where(['website_id' => $website_id,'user_id' => $this->id])->first();
+        return $hasSubscribed ? true : false;
+
+     }
 }

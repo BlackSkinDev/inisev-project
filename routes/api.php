@@ -17,11 +17,9 @@ use Illuminate\Support\Facades\Route;
 Route::namespace('Api')->group(function () {
 
     // create post for a website
-    Route::post('{website}/post', [\App\Http\Controllers\Api\PostController::class,'store']);
+    Route::post('websites/{website}/post', [\App\Http\Controllers\Api\WebsiteController::class,'store']);
 
     // making user subscribe to a website
-    Route::get('{website}/subscribe/{user}/user', [\App\Http\Controllers\Api\WebsiteController::class,'subscribe']);
-
-
+    Route::post('websites/{website}/{user}/subscribe', [\App\Http\Controllers\Api\WebsiteController::class,'subscribe']);
 
 });

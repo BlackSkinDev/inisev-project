@@ -33,12 +33,24 @@ class PostRequest extends FormRequest
         ];
     }
 
+    // public function validated()
+    // {
+    //     return array_merge(parent::validated(), [
+    //         'website' => $this->input('height'),
+    //     ]);
+    // }
+
     protected function failedValidation(Validator $validator) {
 
-        throw new HttpResponseException(response()->json([
+        // throw new HttpResponseException(response()->json([
+        //     'status' => 'error',
+        //     'message' =>null,
+        //     'data'=>$validator->errors()->all()],Response::HTTP_BAD_REQUEST
+        // ));
+        throw new HttpResponseException(response([
             'status' => 'error',
             'message' =>null,
-            'data'=>$validator->errors()->all()],Response::HTTP_BAD_REQUEST
-        ));
+            'data'=>$validator->errors()
+        ],Response::HTTP_BAD_REQUEST));
     }
 }

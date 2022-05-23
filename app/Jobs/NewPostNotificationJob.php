@@ -6,6 +6,7 @@ use Illuminate\Bus\Queueable;
 use App\Mail\NewPostNotification;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -15,8 +16,9 @@ class NewPostNotificationJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public $post;
-    public $website;
+    public $postId;
+    public $websiteId;
+    public $users;
 
 
     /**
@@ -24,10 +26,11 @@ class NewPostNotificationJob implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($website,$post)
+    public function __construct($websiteId,$postId,$users)
     {
-        $this->website = $website;
-        $this->post = $post;
+        $this->websiteId = $websiteId;
+        $this->postId = $postId;
+        $this->users = $users;
     }
 
     /**
@@ -37,11 +40,12 @@ class NewPostNotificationJob implements ShouldQueue
      */
     public function handle()
     {
-        $subscribers = $this->website->subscribers()->get();
 
-        foreach ($subscribers as $key => $user) {
-            Mail::to($user)->send(new NewPostNotification($this->website,$this->post));
-        }
+        Artisan::call('send:email', [
+            'users' => $this->users->pluck('id'),
+            'website' => $this->websiteId,
+            'post' => $this->postId
+        ]);
 
     }
 }
