@@ -14,51 +14,59 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Jobs\NewPostNotificationJob;
 use App\Http\Requests\Posts\PostRequest;
+use App\Services\WebsiteService;
 use Illuminate\Support\Facades\Artisan;
+use LDAP\Result;
 
 class WebsiteController extends Controller
 {
 
+
     use ResponseStructure;
 
-    public function store(PostRequest $request,Website $website){
+    protected $websiteService;
 
-        $post  =  $website->posts()->create($request->validated());
-        $websiteSubscribers = DB::table('websites')
-        ->join('subscriptions', 'subscriptions.website_id','=','websites.id')
-        ->join('users', 'users.id', '=','subscriptions.user_id')
-        ->where('websites.id',$website->id)
-        ->select('users.*')->get();
+    public  function __construct(WebsiteService $websiteService)
+    {
+        $this->websiteService = $websiteService;
+    }
 
 
-       if($websiteSubscribers){
-            NewPostNotificationJob::dispatch($website->id,$post->id,$websiteSubscribers);
-       }
-
-       return $this->successResponse($post,null,Response::HTTP_OK);
+    public function store(PostRequest $request,Website $website)
+    {
+        try{
+            $post = $this->websiteService->storeWebsitePost($request->validated(),$website);
+            return $this->successResponse($post,null,Response::HTTP_OK);
+        }
+        catch(\Exception $e){
+            $this->errorResponse($e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR,null);
+        }
     }
 
 
 
     // subscribe to website
     // Invalid users/websites returns 404
-    public function subscribe(Website $website, User $user){
-        // returns prompt if user is  subscribed to website
-        if($user->hasSubscribedToWebsite($website->id)){
-            return $this->successResponse(null,'You already subscribed to this website',Response::HTTP_OK);
+    public function subscribe(Website $website, User $user)
+    {
+        try{
+            // returns prompt if user is  subscribed to website
+            if($user->hasSubscribedToWebsite($website->id)){
+                return $this->successResponse(null,'You already subscribed to this website!',Response::HTTP_OK);
+            }
+            $this->websiteService->subscribeToWebsite($website,$user);
+            return $this->successResponse(null,'Subscription successful!',Response::HTTP_OK);
         }
-        // subscribe to website
-        Subscription::create([
-            'user_id'=>$user->id,
-            'website_id' => $website->id
-        ]);
-        return $this->successResponse(null,'Subscription to website successful',Response::HTTP_OK);
+        catch(\Exception $e){
+            $this->errorResponse($e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR,null);
+        }
     }
 
-
-
-
-
-
-
 }
+
+
+
+
+
+
+

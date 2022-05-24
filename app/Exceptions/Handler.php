@@ -49,8 +49,14 @@ class Handler extends ExceptionHandler
         if($e instanceof  ModelNotFoundException || $e instanceof NotFoundHttpException){
             return response()->json(['message'=>'Resource not found'],Response::HTTP_NOT_FOUND);
         }
+        $res = [
+            'message'=>$e->getMessage(),
+            'file'=>$e->getFile(),
+            'line' =>$e->getLine(),
+            'trace'=>$e->getTraceAsString(),
+           ];
 
-       return response()->json(['message'=>$e->getMessage()],Response::HTTP_INTERNAL_SERVER_ERROR);
+       return response()->json($res,Response::HTTP_INTERNAL_SERVER_ERROR);
 
 
     }
